@@ -5,6 +5,7 @@
     <string name="details_label">Details</string>
     <string name="load_error_message">Failed to load movie data.\nPlease try again.</string>
     <string name="no_data_message">Failed to load movie data.\nNo data available.</string>
+    <string name="no_load_more_message">Failed to load movie data.\nNo more available.</string>
     <string name="no_connection_message">Failed to load movie data.\nNo connection available.</string>
     <string name="no_configurations_message">Failed to load movie data.\nNo  API configurations available.</string>
     <string name="action_sort_popular">Popular</string>
@@ -32,5 +33,7 @@
     <string name="intent_key_selected_movie">intent_key_selected_movie</string>
     <string name="intent_key_movies_list">intent_key_movies_list</string>
     <string name="intent_key_selected_sort">intent_key_selected_sort</string>
+    <string name="intent_key_pages_loaded">intent_key_pages_loaded</string>
+    <string name="intent_key_total_pages">intent_key_total_pages</string>
 
 </resources>
