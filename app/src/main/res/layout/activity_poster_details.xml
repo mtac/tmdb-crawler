@@ -49,12 +49,27 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/movie_details_release_date"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
                         android:paddingTop="@dimen/content_vertical_padding"
                         android:paddingBottom="@dimen/content_vertical_padding"
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_release_date"/>
+
+                    <TextView
+                        android:id="@+id/movie_details_release_date"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                        android:paddingBottom="@dimen/content_vertical_padding"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                        android:paddingTop="@dimen/content_vertical_padding"
+                        android:paddingBottom="@dimen/content_vertical_padding"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_user_rating" />
 
                     <TextView
                         android:id="@+id/movie_details_vote_average"
@@ -66,9 +81,16 @@
             </LinearLayout>
 
             <TextView
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:paddingTop="@dimen/content_vertical_padding"
+                android:paddingBottom="@dimen/content_vertical_padding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_plot_synopsis" />
+
+            <TextView
                 android:id="@+id/movie_details_plot_synopsis"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
-                android:paddingTop="@dimen/content_vertical_padding"
                 android:paddingBottom="@dimen/content_vertical_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

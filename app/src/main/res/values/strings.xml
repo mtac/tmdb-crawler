@@ -9,6 +9,9 @@
     <string name="no_configurations_message">Failed to load movie data.\nNo  API configurations available.</string>
     <string name="action_sort_popular">Popular</string>
     <string name="action_sort_top_rated">Top Rated</string>
+    <string name="label_release_date">Release Date</string>
+    <string name="label_user_rating">User Rating</string>
+    <string name="label_plot_synopsis">Plot Synopsis</string>
 
     <!-- The Movie Database Related Strings -->
     <string name="tmdb_base_url">https://api.themoviedb.org/3/</string>

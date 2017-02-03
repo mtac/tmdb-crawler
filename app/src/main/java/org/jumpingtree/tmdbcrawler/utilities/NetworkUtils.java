@@ -95,7 +95,7 @@ public final class NetworkUtils {
         String defaultSize = context.getString(R.string.tmdb_default_image_size);
         String size;
 
-        if(sizes.contains(defaultSize)) {
+        if(sizes == null || sizes.contains(defaultSize)) {
             size = defaultSize;
         } else {
             size = sizes.get(0);

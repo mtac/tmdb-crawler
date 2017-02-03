@@ -52,7 +52,7 @@ public class PosterDetailsActivity extends AppCompatActivity {
             mMoviePlotSynopsis = (TextView) findViewById(R.id.movie_details_plot_synopsis);
             mMoviePoster = (ImageView) findViewById(R.id.movie_details_poster);
 
-            mMovieTitle.setText(this.mSelectedMovie.getTitle());
+            mMovieTitle.setText(this.mSelectedMovie.getOriginalTitle());
             mMovieReleaseDate.setText(this.mSelectedMovie.getReleaseDate());
             mMovieVoteAverage.setText(String.valueOf(this.mSelectedMovie.getVoteAverage()));
             mMoviePlotSynopsis.setText(this.mSelectedMovie.getOverview());

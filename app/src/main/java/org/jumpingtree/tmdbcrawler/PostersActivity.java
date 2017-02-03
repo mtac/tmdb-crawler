@@ -92,9 +92,20 @@ public class PostersActivity extends AppCompatActivity implements PostersAdapter
         Long lastConfigCheck = TMDBPreferences.getInstance().getLastConfigurationChangeDate(PostersActivity.this);
         long dif = new Date().getTime() - lastConfigCheck;
         long days = TimeUnit.MILLISECONDS.toDays(dif);
+        boolean reload = days >= TMDBPreferences.getInstance().PREF_MIN_DAYS_BETWEEN_CONFIG_CHECKS;
+        ApiConfigurationObject conf = TMDBPreferences.getInstance().getLastConfiguration(PostersActivity.this);
 
-        if (days >= TMDBPreferences.getInstance().PREF_MIN_DAYS_BETWEEN_CONFIG_CHECKS) {
+        if (conf == null || reload) {
             Log.d(TAG,"Fetching new configuration from server!");
+            //TODO encapsulate Log to protect against exceptions while logging
+            try{
+                Log.d(TAG, "Last config load: " + new Date(lastConfigCheck));
+                Log.d(TAG, "Days since last config load: " + days);
+                Log.d(TAG, "Days between config loads: " + TMDBPreferences.getInstance().PREF_MIN_DAYS_BETWEEN_CONFIG_CHECKS);
+            }catch(Exception e) {
+                e.printStackTrace();
+            }
+
             if(NetworkUtils.isOnline(PostersActivity.this)) {
                 new FetchConfigsTask().execute();
             } else {
@@ -102,7 +113,7 @@ public class PostersActivity extends AppCompatActivity implements PostersAdapter
             }
         } else {
             Log.d(TAG,"Using cached configuration!");
-            TMDBPreferences.getInstance().setmLastConfiguration(TMDBPreferences.getInstance().getLastConfiguration(PostersActivity.this));
+            TMDBPreferences.getInstance().setmLastConfiguration(conf);
             if(mMoviesList == null || mMoviesList.isEmpty()) {
                 showLoadingIndicator(true);
                 loadMovies();
