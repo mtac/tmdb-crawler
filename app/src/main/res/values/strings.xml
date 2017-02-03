@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">TMDBCrawler</string>
+    <string name="app_label">TMDB Crawler</string>
+    <string name="movies_label">Movies</string>
+    <string name="details_label">Details</string>
+    <string name="load_error_message">Failed to load movie data.\nPlease try again.</string>
+    <string name="no_data_message">Failed to load movie data.\nNo data available.</string>
+    <string name="no_connection_message">Failed to load movie data.\nNo connection available.</string>
+    <string name="no_configurations_message">Failed to load movie data.\nNo  API configurations available.</string>
+    <string name="action_sort_popular">Popular</string>
+    <string name="action_sort_top_rated">Top Rated</string>
+
+    <!-- The Movie Database Related Strings -->
+    <string name="tmdb_base_url">https://api.themoviedb.org/3/</string>
+    <string name="tmdb_api_key">[YOUR_API_KEY]</string>
+    <string name="tmdb_api_key_param">api_key</string>
+    <string name="tmdb_configuration">configuration</string>
+    <string name="tmdb_movie">movie/</string>
+    <string name="tmdb_popular_movies">popular</string>
+    <string name="tmdb_top_rated_movies">top_rated</string>
+    <string name="tmdb_page_param">page</string>
+    <string name="tmdb_default_image_size">w185</string>
+
+    <!-- SharedPreferences Related Strings -->
+    <string name="pref_last_configuration">org.jumpingtree.tmdbcrawler.pref_last_config</string>
+    <string name="pref_last_config_date">org.jumpingtree.tmdbcrawler.pref_last_config_date</string>
+
+    <!-- Intent Keys Related Strings -->
+    <string name="intent_key_selected_movie">intent_key_selected_movie</string>
+    <string name="intent_key_movies_list">intent_key_movies_list</string>
+    <string name="intent_key_selected_sort">intent_key_selected_sort</string>
+
+</resources>

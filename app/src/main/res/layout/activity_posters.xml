@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- A list of movie posters from 'The Movie Database' -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_movie_posters"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"/>
+
+    <!-- An error message that will be shown to users when we fail to load movie data -->
+    <TextView
+        android:id="@+id/tv_load_error_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/content_default_padding"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:text="@string/load_error_message"
+        android:textSize="20sp"
+        android:visibility="invisible" />
+
+    <!-- A progress bar that will be shown to users to indicate that movie data is loading -->
+    <ProgressBar
+        android:id="@+id/pb_loading_indicator"
+        android:layout_width="@dimen/progress_bar_size"
+        android:layout_height="@dimen/progress_bar_size"
+        android:layout_gravity="center"
+        android:visibility="invisible" />
+
+</FrameLayout>
