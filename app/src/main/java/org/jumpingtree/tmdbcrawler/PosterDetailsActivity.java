@@ -15,6 +15,7 @@ import org.jumpingtree.tmdbcrawler.utilities.NetworkUtils;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class PosterDetailsActivity extends AppCompatActivity {
 

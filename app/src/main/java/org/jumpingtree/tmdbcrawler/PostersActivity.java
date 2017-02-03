@@ -34,12 +34,14 @@ public class PostersActivity extends AppCompatActivity implements PostersAdapter
 
     private static final String TAG = PostersActivity.class.getSimpleName();
 
+    private static final int FIRST_PAGE = 1;
     private static final int GRID_COLUMN_COUNT = 2;
 
     private static final int SORT_POPULAR_MOVIES = 0;
     private static final int SORT_TOP_RATED_MOVIES = 1;
 
     private RecyclerView mRecyclerView;
+    private GridLayoutManager mLayoutManager;
     private PostersAdapter mPostersAdapter;
     private TextView mErrorMessageDisplay;
     private ProgressBar mLoadingIndicator;
@@ -48,6 +50,12 @@ public class PostersActivity extends AppCompatActivity implements PostersAdapter
 
     private List<Movie> mMoviesList;
     private int mSelectedSort = SORT_POPULAR_MOVIES;
+
+    private int mPagesLoaded = FIRST_PAGE;
+    private int mTotalPages = FIRST_PAGE;
+
+    private boolean loadingMorePages = false;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +68,12 @@ public class PostersActivity extends AppCompatActivity implements PostersAdapter
         if(savedInstanceState != null && savedInstanceState.containsKey(getString(R.string.intent_key_selected_sort))) {
             mSelectedSort = savedInstanceState.getInt(getString(R.string.intent_key_selected_sort),SORT_POPULAR_MOVIES);
         }
+        if(savedInstanceState != null && savedInstanceState.containsKey(getString(R.string.intent_key_pages_loaded))) {
+            mPagesLoaded = savedInstanceState.getInt(getString(R.string.intent_key_pages_loaded),FIRST_PAGE);
+        }
+        if(savedInstanceState != null && savedInstanceState.containsKey(getString(R.string.intent_key_total_pages))) {
+            mTotalPages = savedInstanceState.getInt(getString(R.string.intent_key_total_pages),FIRST_PAGE);
+        }
 
         setContentView(R.layout.activity_posters);
 
@@ -68,13 +82,41 @@ public class PostersActivity extends AppCompatActivity implements PostersAdapter
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_movie_posters);
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_load_error_message);
 
-        GridLayoutManager layoutManager
-                = new GridLayoutManager(this, GRID_COLUMN_COUNT);
-        mRecyclerView.setLayoutManager(layoutManager);
+        mLayoutManager = new GridLayoutManager(this, GRID_COLUMN_COUNT);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
         mPostersAdapter = new PostersAdapter(mMoviesList, this);
         mRecyclerView.setAdapter(mPostersAdapter);
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+        {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+            {
+                if(dy > 0 && mLayoutManager != null)
+                {
+                    visibleItemCount = mLayoutManager.getChildCount();
+                    totalItemCount = mLayoutManager.getItemCount();
+                    pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+                    if (!loadingMorePages)
+                    {
+                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount)
+                        {
+                            Log.d(TAG, "Current Page: " + mPagesLoaded);
+                            if(mPagesLoaded < mTotalPages) {
+                                loadingMorePages = true;
+                                mPagesLoaded++;
+                                Log.d(TAG, "Next Page: " + mPagesLoaded);
+                                loadMovies();
+                            }
+                            Log.d(TAG, "Total Pages: " + mTotalPages);
+                        }
+                    }
+                }
+            }
+        });
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
@@ -85,6 +127,8 @@ public class PostersActivity extends AppCompatActivity implements PostersAdapter
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(getString(R.string.intent_key_movies_list), Parcels.wrap(mMoviesList));
         outState.putInt(getString(R.string.intent_key_selected_sort), mSelectedSort);
+        outState.putInt(getString(R.string.intent_key_pages_loaded), mPagesLoaded);
+        outState.putInt(getString(R.string.intent_key_total_pages), mTotalPages);
         super.onSaveInstanceState(outState);
     }
 
@@ -127,10 +171,10 @@ public class PostersActivity extends AppCompatActivity implements PostersAdapter
 
             switch (mSelectedSort) {
                 case SORT_POPULAR_MOVIES:
-                    moviesUrl = NetworkUtils.buildURLForTMDBPopularMovies(PostersActivity.this);
+                    moviesUrl = NetworkUtils.buildURLForTMDBPopularMovies(PostersActivity.this, mPagesLoaded);
                     break;
                 case SORT_TOP_RATED_MOVIES:
-                    moviesUrl = NetworkUtils.buildURLForTMDBTopRatedMovies(PostersActivity.this);
+                    moviesUrl = NetworkUtils.buildURLForTMDBTopRatedMovies(PostersActivity.this, mPagesLoaded);
                     break;
             }
             updateActivityTitle();
@@ -192,11 +236,11 @@ public class PostersActivity extends AppCompatActivity implements PostersAdapter
         }
     }
 
-    private void showToast(Toast newToast) {
+    private void showToast(String message, int length) {
         if (mActiveToast != null) {
             mActiveToast.cancel();
         }
-        mActiveToast = newToast;
+        mActiveToast = Toast.makeText(PostersActivity.this,message,length);
         mActiveToast.show();
     }
 
@@ -210,17 +254,18 @@ public class PostersActivity extends AppCompatActivity implements PostersAdapter
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        mPagesLoaded = FIRST_PAGE;
 
         //TODO should allow selection of the choice already loaded on screen for refresh purposes, or block it?
 
         switch (id) {
             case R.id.action_sort_popular:
-                showToast(Toast.makeText(PostersActivity.this,"Load Popular Movies", Toast.LENGTH_LONG));
+                showToast("Load Popular Movies", Toast.LENGTH_LONG);
                 mSelectedSort = SORT_POPULAR_MOVIES;
                 loadMovies();
                 break;
             case R.id.action_sort_top_rated:
-                showToast(Toast.makeText(PostersActivity.this,"Load Top Rated Movies", Toast.LENGTH_LONG));
+                showToast("Load Top Rated Movies", Toast.LENGTH_LONG);
                 mSelectedSort = SORT_TOP_RATED_MOVIES;
                 loadMovies();
                 break;
@@ -298,26 +343,39 @@ public class PostersActivity extends AppCompatActivity implements PostersAdapter
         @Override
         protected void onPostExecute(ApiMoviesRequest moviesRequest) {
             if (moviesRequest != null) {
-                //TODO Use page number to load more pages
                 List<Movie> movies = moviesRequest.getMovies();
+                mTotalPages = (moviesRequest.getTotalPages() != null ? moviesRequest.getTotalPages().intValue() : FIRST_PAGE);
                 if(movies != null) {
                     if (!movies.isEmpty()) {
                         showMoviePostersView();
-                        mMoviesList = movies;
-                        mPostersAdapter.setMoviesList(movies);
+                        if(mPagesLoaded > FIRST_PAGE) {
+                            mMoviesList.addAll(movies);
+                        } else {
+                            mMoviesList = movies;
+                        }
+                        mPostersAdapter.setMoviesList(mMoviesList);
                     } else {
-                        showNoDataMessage();
+                        if(mPagesLoaded == FIRST_PAGE) {
+                            showNoDataMessage();
+                        } else {
+                            showToast(getString(R.string.no_load_more_message),Toast.LENGTH_SHORT);
+                        }
                     }
                 } else {
-                    showErrorMessage();
-                    String errorMsg = moviesRequest.getStatusMessage();
-                    if(errorMsg != null && !errorMsg.isEmpty()) {
-                        showToast(Toast.makeText(PostersActivity.this,errorMsg,Toast.LENGTH_LONG));
+                    if(mPagesLoaded == FIRST_PAGE) {
+                        showErrorMessage();
+                        String errorMsg = moviesRequest.getStatusMessage();
+                        if (errorMsg != null && !errorMsg.isEmpty()) {
+                            showToast(errorMsg, Toast.LENGTH_LONG);
+                        }
+                    } else {
+                        showToast(getString(R.string.no_load_more_message),Toast.LENGTH_SHORT);
                     }
                 }
             } else {
                 showErrorMessage();
             }
+            loadingMorePages = false;
             showLoadingIndicator(false);
         }
     }

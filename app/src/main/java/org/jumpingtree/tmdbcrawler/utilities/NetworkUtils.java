@@ -46,11 +46,7 @@ public final class NetworkUtils {
         return builtUri.toString();
     }
 
-    public static String buildURLForTMDBPopularMovies(Context context) {
-        return buildURLForTMDBPopularMovies(context,null);
-    }
-
-    public static String buildURLForTMDBPopularMovies(Context context, String page) {
+    public static String buildURLForTMDBPopularMovies(Context context, int page) {
         StringBuilder popularBaseURL = new StringBuilder();
         popularBaseURL.append(context.getString(R.string.tmdb_base_url));
         popularBaseURL.append(context.getString(R.string.tmdb_movie));
@@ -58,21 +54,14 @@ public final class NetworkUtils {
 
         Uri.Builder builder = Uri.parse(popularBaseURL.toString()).buildUpon();
         builder.appendQueryParameter(context.getString(R.string.tmdb_api_key_param), context.getString(R.string.tmdb_api_key));
-
-        if(page != null) {
-            builder.appendQueryParameter(context.getString(R.string.tmdb_page_param), page);
-        }
+        builder.appendQueryParameter(context.getString(R.string.tmdb_page_param), String.valueOf(page));
 
         Uri builtUri = builder.build();
 
         return builtUri.toString();
     }
 
-    public static String buildURLForTMDBTopRatedMovies(Context context) {
-        return buildURLForTMDBTopRatedMovies(context,null);
-    }
-
-    public static String buildURLForTMDBTopRatedMovies(Context context, String page) {
+    public static String buildURLForTMDBTopRatedMovies(Context context, int page) {
         StringBuilder popularBaseURL = new StringBuilder();
         popularBaseURL.append(context.getString(R.string.tmdb_base_url));
         popularBaseURL.append(context.getString(R.string.tmdb_movie));
@@ -80,10 +69,7 @@ public final class NetworkUtils {
 
         Uri.Builder builder = Uri.parse(popularBaseURL.toString()).buildUpon();
         builder.appendQueryParameter(context.getString(R.string.tmdb_api_key_param), context.getString(R.string.tmdb_api_key));
-
-        if(page != null) {
-            builder.appendQueryParameter(context.getString(R.string.tmdb_page_param), page);
-        }
+        builder.appendQueryParameter(context.getString(R.string.tmdb_page_param), String.valueOf(page));
 
         Uri builtUri = builder.build();
 
